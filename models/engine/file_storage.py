@@ -22,6 +22,17 @@ class FileStorage:
         """Adds new object to storage dictionary"""
         self.all().update({obj.to_dict()['__class__'] + '.' + obj.id: obj})
 
+
+    def get(self, cls, id):
+        all = self.all(cls)
+        for key in list(all.keys()):
+            if key == f"{cls.__name__}.{id}":
+                return all[key]
+
+    def count(self, cls=None):
+        return len(self.all(cls))
+
+
     def save(self):
         """Saves storage dictionary to file"""
         with open(FileStorage.__file_path, 'w') as f:

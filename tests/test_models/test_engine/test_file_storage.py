@@ -2,6 +2,7 @@
 """ Module for testing file storage"""
 import unittest
 from models.base_model import BaseModel
+from models.state import State
 from models import storage
 import os
 
@@ -117,3 +118,15 @@ class test_fileStorage(unittest.TestCase):
         from models.engine.file_storage import FileStorage
         print(type(storage))
         self.assertEqual(type(storage), FileStorage)
+
+    def test_get(self):
+        from models.engine.file_storage import FileStorage
+        all = FileStorage().all(State)
+        special = all["State.028d6999-d4ff-4932-8a53-940633786b88"]
+        self.assertEquals(special, FileStorage().get(State, "028d6999-d4ff-4932-8a53-940633786b88"))
+
+    def test_count(self):
+        from models.engine.file_storage import FileStorage
+        all = FileStorage().all()
+        len = len(all)
+        self.assertEquals(len, FileStorage().get())

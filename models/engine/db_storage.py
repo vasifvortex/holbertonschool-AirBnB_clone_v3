@@ -51,6 +51,19 @@ class DBStorage:
 
         return result
 
+    def get(self, cls, id):
+        all = self.all(cls)
+        for key in list(all.keys()):
+            if key == f"{cls.__name__}.{id}":
+                return all[f"{key}"]
+        return None
+
+    def count(self, cls=None):
+        if cls is None:
+            return len(self.all())
+        else:
+            return len(self.all(cls))
+
     def new(self, obj):
         """Adds new object to storage"""
         self.__session.add(obj)

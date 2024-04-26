@@ -13,6 +13,7 @@ app = Flask(__name__)
 def teardown(exception):
     storage.close()
 
+
 app.register_blueprint(app_views)
 
 

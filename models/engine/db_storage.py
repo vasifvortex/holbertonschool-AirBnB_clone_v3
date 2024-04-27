@@ -39,12 +39,12 @@ class DBStorage:
         if cls:
             objects = self.__session.query(cls)
         else:
-            classes = [User, State, City, Amenity, Place, Review]
-            objects = []
-            for cls in classes:
-                cls_objects = self.__session.query(cls).all()
-                if cls_objects is not None:
-                    objects += cls_objects
+            objs = self.__session.query(State).all()
+            objs.extend(self.__session.query(City).all())
+            objs.extend(self.__session.query(User).all())
+            objs.extend(self.__session.query(Place).all())
+            objs.extend(self.__session.query(Review).all())
+            objs.extend(self.__session.query(Amenity).all())
 
         result = {}
         for obj in objects:

@@ -37,12 +37,14 @@ class DBStorage:
         Session = sessionmaker(bind=self.__engine)
         self.__session = Session()
         if cls:
-            objects = self.__session.query(cls)
+            objects = self.__session.query(cls).all()
         else:
             classes = [User, State, City, Amenity, Place, Review]
             objects = []
             for cls in classes:
-                objects += self.__session.query(cls).all()
+                cls_objects = self.__session.query(cls).all()
+                if cls_objects is not None:
+                    objects += cls_objects
 
         result = {}
         for obj in objects:

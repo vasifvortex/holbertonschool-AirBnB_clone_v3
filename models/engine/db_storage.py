@@ -33,30 +33,23 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """
-        Retrieves all objects from the database.
-
-        Args:
-            cls (optional): The class of objects to retrieve. If not provided,
-                            all objects from all classes will be retrieved.
-
-        Returns:
-            A dictionary of objects, where the key is in the format
-            "<class_name>.<object_id>" and the value is the object itself.
-        """
-        if cls is None:
-            objs = self.__session.query(State).all()
-            objs.extend(self.__session.query(City).all())
-            objs.extend(self.__session.query(User).all())
-            objs.extend(self.__session.query(Place).all())
-            objs.extend(self.__session.query(Review).all())
-            objs.extend(self.__session.query(Amenity).all())
+        """Returns a dictionary of models currently in storage"""
+        Session = sessionmaker(bind=self.__engine)
+        self.__session = Session()
+        if cls:
+            objects = self.__session.query(cls)
         else:
-            if type(cls) is str:
-                cls = eval(cls)
-            objs = self.__session.query(cls)
-        return {"{}.{}".format(type(obj).__name__, obj.id): obj
-                for obj in objs}
+            classes = [User, State, City, Amenity, Place, Review]
+            objects = []
+            for cls in classes:
+                objects += self.__session.query(cls).all()
+
+        result = {}
+        for obj in objects:
+            key = "{}.{}".format(type(obj).__name__, obj.id)
+            result[key] = obj
+
+        return result
 
     def get(self, cls, id):
         all = self.all(cls)

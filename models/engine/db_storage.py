@@ -34,22 +34,19 @@ class DBStorage:
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
-        Session = sessionmaker(bind=self.__engine)
-        self.__session = Session()
-        if cls:
-            objects = self.__session.query(cls)
-        else:
+        if cls is None:
             objs = self.__session.query(State).all()
             objs.extend(self.__session.query(City).all())
             objs.extend(self.__session.query(User).all())
             objs.extend(self.__session.query(Place).all())
             objs.extend(self.__session.query(Review).all())
             objs.extend(self.__session.query(Amenity).all())
-
-        result = {}
-        for obj in objects:
-            key = "{}.{}".format(type(obj).__name__, obj.id)
-            result[key] = obj
+        else:
+            if type(cls) is str:
+                cls = eval(cls)
+            objs = self.__session.query(cls)
+        return {"{}.{}".format(type(obj).__name__, obj.id): obj
+                for obj in objs}
 
         return result
 

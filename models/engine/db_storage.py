@@ -37,7 +37,7 @@ class DBStorage:
         Session = sessionmaker(bind=self.__engine)
         self.__session = Session()
         if cls:
-            objects = self.__session.query(cls).all()
+            objects = self.__session.query(cls)
         else:
             classes = [User, State, City, Amenity, Place, Review]
             objects = []

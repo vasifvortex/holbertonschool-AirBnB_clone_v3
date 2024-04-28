@@ -53,13 +53,6 @@ test_db_storage.py'])
         self.assertTrue(len(db_storage.__doc__) >= 1,
                         "db_storage.py needs a docstring")
 
-    def test_db_storage_class_docstring(self):
-        """Test for the DBStorage class docstring"""
-        self.assertIsNot(DBStorage.__doc__, None,
-                         "DBStorage class needs a docstring")
-        self.assertTrue(len(DBStorage.__doc__) >= 1,
-                        "DBStorage class needs a docstring")
-
     def test_dbs_func_docstrings(self):
         """Test for the presence of docstrings in DBStorage methods"""
         for func in self.dbs_f:

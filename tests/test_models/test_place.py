@@ -13,20 +13,20 @@ class test_Place(test_basemodel):
         self.name = "Place"
         self.value = Place
         self.new = Place(city_id="0001",
-                            user_id="0001",
-                            name="My_little_house",
-                            description="My house is little",
-                            number_rooms=1,
-                            number_bathrooms=1,
-                            max_guest=1,
-                            price_by_night=1,
-                            latitude=1.0,
-                            longitude=1.0,
-                            amenity_ids=[])
+                         user_id="0001",
+                         name="My_little_house",
+                         description="My house is little",
+                         number_rooms=1,
+                         number_bathrooms=1,
+                         max_guest=1,
+                         price_by_night=1,
+                         latitude=1.0,
+                         longitude=1.0,
+                         amenity_ids=[])
 
     def test_city_id(self):
         """ Test """
-    
+
         self.assertEqual(type(self.new.city_id), str)
 
     def test_user_id(self):

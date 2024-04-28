@@ -44,4 +44,3 @@ class TestDBStorage(unittest.TestCase):
         storage.delete(state2)
         new_count = storage.count()
         self.assertTrue(new_count == count)
-        

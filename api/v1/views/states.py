@@ -14,11 +14,10 @@ def states():
 
 @app_views.route("/states/<state_id>", strict_slashes=False)
 def state(state_id):
-    states = storage.all(State)
-    state = states[f"State.{state_id}"]
+    state = storage.get(State, state_id)
     if state is None:
         abort(404)
-    return jsonify(state.to_dict())
+    return jsonify(state.to_dict()), 200
 
 
 @app_views.route("/states/<state_id>", strict_slashes=False, methods=["DELETE"])
@@ -37,14 +36,14 @@ def post_state():
     if not request.is_json:
         return jsonify({"error": "Not a JSON"}), 400
     
-    state = State()
-    if request.get_json("name"):
-        state.name = request.get_json("name")
-        state.save()
-    else:
+    data = request.get_json()
+
+    if data.get("name") is None:
         return jsonify({"error": "Missing name"}), 400
 
-    return jsonify(state.to_dict()), 201
+    state = State(**data)
+
+    state.save()
 
 
 @app_views.route("/states/<state_id>", strict_slashes=False, methods=["PUT"])

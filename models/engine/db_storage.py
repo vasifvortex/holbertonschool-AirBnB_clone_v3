@@ -58,7 +58,7 @@ class DBStorage:
         return None
 
     def count(self, cls=None):
-            return len(self.all(cls))
+        return len(self.all(cls))
 
     def new(self, obj):
         """Adds new object to storage"""

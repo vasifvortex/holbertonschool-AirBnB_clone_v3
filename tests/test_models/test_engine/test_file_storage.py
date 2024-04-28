@@ -4,6 +4,7 @@ import unittest
 from models.base_model import BaseModel
 from models.state import State
 from models import storage
+from models.user import User
 import os
 
 
@@ -120,13 +121,25 @@ class test_fileStorage(unittest.TestCase):
         self.assertEqual(type(storage), FileStorage)
 
     def test_get(self):
+        """Test that the get method properly retrievs objects"""
         from models.engine.file_storage import FileStorage
-        all = FileStorage().all(State)
-        special = all["State.028d6999-d4ff-4932-8a53-940633786b88"]
-        self.assertEquals(special, FileStorage().get(State, "028d6999-d4ff-4932-8a53-940633786b88"))
+        storage = FileStorage()
+        self.assertIs(storage.get("User", "blah"), None)
+        self.assertIs(storage.get("blah", "blah"), None)
+        new_user = User()
+        new_user.save()
+        self.assertIs(storage.get("User", new_user.id), new_user)
 
+    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db',
+                     "not testing file storage")
     def test_count(self):
         from models.engine.file_storage import FileStorage
-        all = FileStorage().all()
-        len = len(all)
-        self.assertEquals(len, FileStorage().get())
+        storage = FileStorage()
+        initial_length = len(storage.all())
+        self.assertEqual(storage.count(), initial_length)
+        state_len = len(storage.all("State"))
+        self.assertEqual(storage.count("State"), state_len)
+        new_state = State()
+        new_state.save()
+        self.assertEqual(storage.count(), initial_length + 1)
+        self.assertEqual(storage.count("State"), state_len + 1)

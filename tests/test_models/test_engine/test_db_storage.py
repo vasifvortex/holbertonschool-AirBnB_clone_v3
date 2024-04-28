@@ -1,53 +1,46 @@
 #!/usr/bin/python3
-"""
-Contains the TestDBStorageDocs and TestDBStorage classes
-"""
-
-from datetime import datetime
-import inspect
-import models
-from models.base_model import Base
-from models.engine import db_storage
-from models.amenity import Amenity
-from models.base_model import BaseModel
-from models.city import City
-from models.place import Place
-from models.review import Review
-from models.state import State
-from models.user import User
-import json
-import os
+""" Module for testing DB storage """
+from os import getenv
 import unittest
-DBStorage = db_storage.DBStorage
-classes = {"Amenity": Amenity, "City": City, "Place": Place,
-           "Review": Review, "State": State, "User": User}
+from models.base_model import BaseModel
+from models import storage
+from models.state import State
 
 
+@unittest.skipIf(getenv("HBNB_TYPE_STORAGE") != "db", "DBStorage")
 class TestDBStorage(unittest.TestCase):
-    """Test the DBStorage class"""
+    """ Class to test the database storage method """
 
-    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') != 'db',
-                     "not testing db storage")
-    def test_get(self):
-        """Test that get returns specific object, or none"""
-        new_state = State(name="New York")
-        new_state.save()
-        new_user = User(email="bob@foobar.com", password="password")
-        new_user.save()
-        self.assertIs(new_state, models.storage.get("State", new_state.id))
-        self.assertIs(None, models.storage.get("State", "blah"))
-        self.assertIs(None, models.storage.get("blah", "blah"))
-        self.assertIs(new_user, models.storage.get("User", new_user.id))
+    def test_all(self):
+        """ Test for all() method of DBsStorage """
+        new = BaseModel()
+        temp = storage.all()
+        self.assertIsInstance(temp, dict)
 
-    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') != 'db',
-                     "not testing db storage")
+    def test_get_cls(self):
+        """ Test for get() method of DBsStorage """
+        state = State(name="Baku")
+        state.save()
+        state_id = state.id
+        obj = storage.get(State, state_id)
+        obj2 = storage.get(State, 123)
+        self.assertEqual(state, obj)
+        self.assertFalse(obj is obj2)
+
     def test_count(self):
-        """test that new adds an object to the database"""
-        initial_count = models.storage.count()
-        self.assertEqual(models.storage.count("Blah"), 0)
-        new_state = State(name="Florida")
-        new_state.save()
-        new_user = User(email="bob@foobar.com", password="password")
-        new_user.save()
-        self.assertEqual(models.storage.count("State"), initial_count + 1)
-        self.assertEqual(models.storage.count(), initial_count + 2)
+        """ Test for count() method of DBsStorage """
+        count = storage.count()
+        state = State(name="Baku")
+        state.save()
+        new_count = storage.count()
+        self.assertTrue(new_count == count + 1)
+        state2 = State(name="Ganja")
+        state2.save()
+        new_count = storage.count()
+        self.assertTrue(new_count == count + 2)
+        storage.delete(state)
+        new_count = storage.count()
+        self.assertTrue(new_count == count + 1)
+        storage.delete(state2)
+        new_count = storage.count()
+        self.assertTrue(new_count == count)

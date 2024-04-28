@@ -48,8 +48,6 @@ class DBStorage:
         return {"{}.{}".format(type(obj).__name__, obj.id): obj
                 for obj in objs}
 
-        return result
-
     def get(self, cls, id):
         all = self.all(cls)
         for key in list(all.keys()):

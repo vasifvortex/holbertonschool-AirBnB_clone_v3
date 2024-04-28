@@ -126,6 +126,7 @@ class test_fileStorage(unittest.TestCase):
         state = State()
         state.save()
         city = City()
+
         city.save()
         states = storage.count(State)
         all_objs = storage.count()

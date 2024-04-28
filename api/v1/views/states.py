@@ -16,13 +16,15 @@ def states():
 def state(state_id):
     states = storage.all(State)
     state = states[f"State.{state_id}"]
+    if state is None:
+        abort(404)
     return jsonify(state.to_dict())
 
 
 @app_views.route("/states/<state_id>", strict_slashes=False, methods=["DELETE"])
 def del_state(state_id):
     states = storage.all(State)
-    state = states.get(state_id)
+    state = storage.get(State, state_id)
     if state is None:
         abort(404)
     storage.delete(state)
